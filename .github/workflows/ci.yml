@@ -23,6 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     needs: ["tests"]
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v3
         with:
@@ -66,5 +68,5 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: quara/letsgo:${{ github.ref_name }}
+          tags: quara/letsgo-nats:${{ github.ref_name }}
           platforms: linux/amd64,linux/arm64,linux/arm/v7
