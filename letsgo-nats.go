@@ -15,6 +15,7 @@ import (
 
 	"github.com/quara-dev/letsgo-nats/acme"
 	"github.com/quara-dev/letsgo-nats/configuration"
+	"github.com/quara-dev/letsgo-nats/fileserver"
 	"github.com/quara-dev/letsgo-nats/stores"
 )
 
@@ -178,6 +179,11 @@ func main() {
 		defer undo()
 		// Reset these from the snapshots from init for monitor.go
 		server.SnapshotMonitorInfo()
+	}
+
+	// Start fileserver
+	if config.WebEnabled {
+		fileserver.StartHTTPServer(config)
 	}
 
 	ns.WaitForShutdown()

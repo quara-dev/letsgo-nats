@@ -36,6 +36,8 @@ type RawUserConfig struct {
 	DNSAuthTokenFile   string
 	DNSAuthTokenVault  string
 	DNSAuthTokenSecret string
+	WebRoot            string
+	WebEnabled         string
 }
 
 type UserConfig struct {
@@ -51,6 +53,8 @@ type UserConfig struct {
 	DisableCP            bool
 	DNSResolvers         []string
 	DNSTimeout           time.Duration
+	WebRoot              string
+	WebEnabled           bool
 }
 
 // Parse domains from string
@@ -82,6 +86,10 @@ func (c *RawUserConfig) getTOSAgreement() (bool, error) {
 		return false, errors.New(fmt.Sprintf("It is mandatory to agree to Let's Encrypt Term of Usage through %s environment variable", constants.LE_TOS_AGREED))
 	}
 	return true, nil
+}
+
+func (c *RawUserConfig) getWebEnabled() (bool, error) {
+	return strconv.ParseBool(c.WebEnabled)
 }
 
 func (c *RawUserConfig) getCADir() (string, error) {
@@ -343,6 +351,14 @@ func (c *RawUserConfig) parse(storage *stores.Stores) (*UserConfig, error) {
 		config.AuthToken = token
 	}
 
+	config.WebRoot = c.WebRoot
+	webEnabled, err := c.getWebEnabled()
+	if err != nil {
+		return config, err
+	} else {
+		config.WebEnabled = webEnabled
+	}
+
 	return config, nil
 }
 
@@ -363,6 +379,8 @@ func NewRawUserConfig() *RawUserConfig {
 		DNSAuthTokenVault:  getEnv(constants.DNS_AUTH_TOKEN_VAULT, ""),
 		DNSAuthTokenSecret: getEnv(constants.DNS_AUTH_TOKEN_SECRET, constants.DEFAULT_DNS_AUTH_TOKEN_SECRET),
 		OutputDirectory:    getEnv(constants.OUTPUT_DIRECTORY, "./"),
+		WebRoot:            getEnv(constants.WEB_ROOT, constants.DEFAULT_WEB_ROOT),
+		WebEnabled:         getEnv(constants.WEB_ENABLED, constants.DEFAULT_WEB_ENABLED),
 	}
 }
 
