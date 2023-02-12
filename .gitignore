@@ -1,0 +1,12 @@
+# x509 related files
+*.crt
+*.key
+*.csr
+*.ext
+*.srl
+# Test web content
+/www
+# Binary
+/letsgo-nats
+
+gmon.out
